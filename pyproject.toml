@@ -1,0 +1,11 @@
+[project]
+name = "0226-deepresearch"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "celery[redis]>=5.6.3",
+    "fastapi>=0.140.13",
+    "pydantic-settings>=2.14.2",
+]
