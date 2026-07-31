@@ -8,7 +8,7 @@ from app.config.config import get_setting
 from fastapi import APIRouter, HTTPException
 from app.schemas.router_schema import (InitializeProjectRequest, InitializeProjectResponse,GetOutlineResponse,
 ConfirmOrReviseOutlineRequest,ConfirmOrReviseOutlineResponse,GenerateReportRequest,GenerateReportResponse,
-GetTaskStatusResponse,GetLatestReportResponse,TaskType,ResearchProjectStatusType,OutlineNode,ActionType)
+GetTaskStatusResponse,GetLatestReportResponse, Source,TaskType,ResearchProjectStatusType,OutlineNode,ActionType)
 from  app.repository import research_project_repo, research_task_repo,report_version_repository
 from app.background.research_task import schedule_task
 from datetime import datetime
@@ -209,10 +209,10 @@ async def get_latest_report(project_id : str):
 
     return GetLatestReportResponse(
         project_id = project_id,
-        report_id = report["report"],
+        report_id = report["report_id"],
         version = report["version"],
         title= report["title"],
         html= report["html"],
-        sources= report["sources"],
+        sources= [Source.model_validate(source) for source in report["sources"]],
         created_at= report["created_at"]
     )

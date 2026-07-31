@@ -190,3 +190,10 @@ class ResearchReport(BaseModel):
     """
     
     """
+    project_id:str
+
+    title:str
+
+    html:str=Field(description="agent产生的报告的html正文")
+
+    sources:list[Source]

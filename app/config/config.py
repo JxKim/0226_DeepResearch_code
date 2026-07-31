@@ -20,6 +20,9 @@ class Setting(BaseSettings):
     mongodb_database_name:str = "deep_research"
     research_project_collection_name:str = "research_project"
     research_task_collection_name :str= "research_task"
+    report_version_collection_name:str = "report_versions"
+
+    storage_root_dir:str = "./reports"
 
 setting:Optional[Setting] = None
 
