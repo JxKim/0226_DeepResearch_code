@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException
 from app.schemas.router_schema import (InitializeProjectRequest, InitializeProjectResponse,GetOutlineResponse,
 ConfirmOrReviseOutlineRequest,ConfirmOrReviseOutlineResponse,GenerateReportRequest,GenerateReportResponse,
 GetTaskStatusResponse,GetLatestReportResponse,TaskType,ResearchProjectStatusType,OutlineNode,ActionType)
-from  app.repository import research_project_repo, research_task_repo
+from  app.repository import research_project_repo, research_task_repo,report_version_repository
 from app.background.research_task import schedule_task
 from datetime import datetime
 
@@ -65,7 +65,7 @@ async def initialize_project(request:InitializeProjectRequest):
         initial_task_id=task['task_id'],
         initial_task_type=TaskType.GENERATE_RESEARCH_BRIEF,
         topic=request.topic,
-        status=ResearchProjectStatusType.CREATED,
+        status=ResearchProjectStatusType.BRIEF_GENERATING,
         created_at= datetime.now()
     )
 
@@ -83,11 +83,11 @@ async def get_outline(project_id: str):
     输出大纲草案
     """
     # 1、通过research_project_repo 来实现大纲读取
-    outline_list:list[dict] = await research_project_repo.get_project_outline(project_id)
+    outline_list:list[dict] | None = await research_project_repo.get_project_outline(project_id)
 
     # 2、将outline，从list[list] 转换成 list[OutlineNode]
 
-    outline_node_list:list[OutlineNode] = [OutlineNode.model_validate(outline)  for outline in outline_list]
+    outline_node_list:list[OutlineNode] = [OutlineNode.model_validate(outline)  for outline in outline_list] if outline_list else []
 
     # 3、封装输出对象
     return GetOutlineResponse(
@@ -205,7 +205,7 @@ async def get_latest_report(project_id : str):
 
     # 1、从数据库，读取project_id所对应的最新报告
 
-    report = await  research_project_repo.get_latest_report(project_id)
+    report = await  report_version_repository.get_latest_report(project_id)
 
     return GetLatestReportResponse(
         project_id = project_id,

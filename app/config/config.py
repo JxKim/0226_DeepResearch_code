@@ -16,6 +16,11 @@ class Setting(BaseSettings):
     router_prefix:str = "research-projects"
     celery_redis_uri : str = "redis://:infini_rag_flow@localhost:6379/0"
 
+    mongodb_uri:str  = "mongodb://localhost:27017"
+    mongodb_database_name:str = "deep_research"
+    research_project_collection_name:str = "research_project"
+    research_task_collection_name :str= "research_task"
+
 setting:Optional[Setting] = None
 
 def get_setting() -> Setting:

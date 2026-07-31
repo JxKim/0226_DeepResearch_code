@@ -153,3 +153,40 @@ class GetLatestReportResponse(BaseModel):
     sources : list[Source]
 
     created_at:datetime
+
+class ResearchBrief(BaseModel):
+    """
+    
+    """
+    topic:str
+    research_goal:str
+    target_audience:str
+
+    scope_summary:str
+
+    key_questions:str
+
+    assumptions:list[str]
+
+    success_criteria:list[str]
+
+class ResearchBriefAndOutline(BaseModel):
+    """
+    
+    """
+
+    research_brief:ResearchBrief
+    outline : list[OutlineNode]
+
+class ResearchSection(BaseModel):
+
+    """
+    
+    """
+
+    children : list['ResearchSection']
+
+class ResearchReport(BaseModel):
+    """
+    
+    """
