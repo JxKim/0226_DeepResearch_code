@@ -5,7 +5,7 @@
 from typing import Optional
 
 from pydantic_settings import BaseSettings
-
+from pathlib import Path
 
 
 class Setting(BaseSettings):
@@ -24,6 +24,17 @@ class Setting(BaseSettings):
 
     storage_root_dir:str = "./reports"
 
+    root_dir: Path = Path(__file__).parent.parent
+
+    http_time_out:int = 20
+
+    agent_retry_times : int = 5
+
+    tavily_token:str
+
+    ragflow_base_url:str = "http://localhost:80"
+
+    dataset_id:str ="60be664867a011f1af5d8b7d6367b4b2"
 setting:Optional[Setting] = None
 
 def get_setting() -> Setting:

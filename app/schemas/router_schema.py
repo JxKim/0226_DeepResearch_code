@@ -182,7 +182,17 @@ class ResearchSection(BaseModel):
 
     """
     
-    """
+    """ 
+
+    section_id:str
+    title:str
+    summary:str
+    body:str
+    key_findings:list
+    sources:list[Source]
+    tables: list | None
+
+    risks: list | None 
 
     children : list['ResearchSection']
 
@@ -197,3 +207,14 @@ class ResearchReport(BaseModel):
     html:str=Field(description="agent产生的报告的html正文")
 
     sources:list[Source]
+
+
+class ResearchResult(BaseModel):
+
+    title:str = Field(description="整个报告的标题")
+
+    executive_summary:str = Field(description="整个报告的摘要")
+
+    sections :list[ResearchSection]
+
+    sources: list[Source] = Field(description="整个报告，全局的来源列表，这个列表，渲染是，报告完整参考列表来源")

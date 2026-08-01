@@ -233,6 +233,7 @@ async def _generate_report(project_id:str, user_instruction:str,task_id:str):
         # 2、调整项目状态：从outline_ready调整成outline_revising
         await research_project_repo.update_status(project_id=project_id, status=ResearchProjectStatusType.RESEARCH_RUNNING)
 
+        project = await research_project_repo.get_project(project_id)
         # 3、依赖app/agents模块，实现 报告生成的过程
         #         3.1 获取research_agent实例，
         #         3.2 调用该实例的第一个方法：generate_sections，逐章节生成章节内容，获取到各个section的具体内容
@@ -244,7 +245,7 @@ async def _generate_report(project_id:str, user_instruction:str,task_id:str):
 
         sections:list[ResearchSection] = await agent.generate_sections(project_id, user_instruction)
 
-        report: ResearchReport = await agent.generate_report(sections)
+        report: ResearchReport = await agent.generate_report(sections,topic=project["topic"])
 
         # 4、调用 report_storage_repository, 将report 存储起来，
             # 实际生产环境下：对象存储服务，OSS MinIO，在当前项目，要想简单实现，可以将html存储到文件系统当中去。

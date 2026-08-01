@@ -44,7 +44,11 @@ async def get_project_outline(project_id:str) -> list[dict] | None:
     return output_result["outline"] if output_result else None 
 
 
+async def get_project(project_id:str) -> dict:
 
+    project = await collection.find_one({"project_id":project_id})
+
+    return project
 
 
 async def update_status(project_id, status:ResearchProjectStatusType) :
@@ -74,3 +78,34 @@ async def insert_brief_and_outline(project_id:str , brief_and_outline:ResearchBr
                                                                    "outline":[outline.model_dump(mode="python") for outline in brief_and_outline.outline],
                                                                     "updated_at":datetime.datetime.now()
                                                                    }})
+
+
+def get_all_section_or_outline_ids(outline_or_sections:list[dict],type:str)-> list[str]:
+         """
+         想要获取到outline或者sections当中,所有的叶子节点的id
+         """
+         all_sections_ids = []
+         key_name = "node_id" if type == "outline" else "section_id"
+         for outline_node_or_single_section in outline_or_sections:
+            if not outline_node_or_single_section["children"]:
+                all_sections_ids.append(outline_node_or_single_section[key_name])
+            else:
+                all_sections_ids.extend(get_all_section_or_outline_ids(outline_node_or_single_section["children"], type=type))
+         return all_sections_ids
+
+async def insert_section(section:dict,project_id):
+    """
+    向数据库当中，插入一条section，
+    """
+
+    # 1、（如果有）先从project_id所对应的文档中，找到section_id为我们传入的section_id，然后删除
+    await collection.update_one(
+        {"project_id":project_id},
+        {"$pull":{"sections":{"section_id":section["section_id"]}}} 
+    )
+
+    await collection.update_one(
+        {"project_id":project_id},
+        {"$push":{"sections":section}} 
+    )
+
